@@ -1,0 +1,127 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url('weather.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.container {
+  display: flex;
+  width: 900px;
+  height: 500px;
+  background-color: #fff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.info-container {
+  width: 50%;
+  background-color: #63a8e5; /* Change to a sky blue color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info-content {
+  text-align: center;
+  color: #fff;
+}
+
+.info-content p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.info-content .btn {
+  background-color: #fff;
+  color: #63a8e5; /* Change to match the sky blue */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.info-content .btn:hover {
+  background-color: #e0e0e0;
+  color: #63a8e5; /* Change to match the sky blue */
+}
+
+.form-container {
+  width: 50%;
+  padding: 40px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-content {
+  width: 100%;
+}
+
+.form-content h2 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.form-content p {
+  margin: 10px 0;
+  color: #333;
+}
+
+.form-content input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.form-content .btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #63a8e5; /* Change to match the sky blue */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.form-content .btn:hover {
+  background-color: #4a87c2; /* Darker shade of sky blue */
+}
+
+.form-content span {
+  color: red;
+  font-size: 14px;
+}
+
+a {
+  display:flex;
+  width: fit-content;
+  margin: 1rem auto;
+  padding: 0.8rem 1.5rem;
+  background-color: #f01010;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+a:hover {
+  background-color: #e01313;
+}

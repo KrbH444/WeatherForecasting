@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/realtime.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="current-weather">
+            <h1>Real-Time</h1>
+            <h2>Melaka</h2>
+            {% if weather %}
+            <p class="temperature">{{ weather.temperature }}°C</p>
+            <p class="description">{{ weather.description }}</p>
+            <p class="time">{{ current_time }}</p>
+            <div class="weather-details">
+                <p>Wind: {{ weather.wind_speed }} km/h</p>
+                <p>Humidity: {{ weather.humidity }}%</p>
+                <p>Precipitation: {{ weather.precipitation }}%</p>
+            </div>
+            <div class="sun-times">
+                <p>Sunrise: {{ weather.sunrise }}</p>
+                <p>Sunset: {{ weather.sunset }}</p>
+            </div>
+            <button class="refresh-button" onclick="location.reload();">Refresh Data</button>
+            {% else %}
+            <p>No current weather data available.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h2>48-Hour Predictions</h2>
+    <div class="carousel-wrapper">
+        <div class="carousel-container">
+            <ul class="carousel">
+                {% if predicted_48h %}
+                {% for prediction in predicted_48h %}
+                {% if loop.index0 >= current_hour %}
+                {% set prediction_time = prediction[0].split(':') %}
+                {% set hour = prediction_time[0]|int %}
+                {% set am_pm = prediction_time[1][-2:] %}
+                {% if hour == 12 %}
+                    {% set hour = 0 if am_pm == 'AM' else 12 %}
+                {% else %}
+                    {% set hour = hour if am_pm == 'AM' else hour + 12 %}
+                {% endif %}
+                {% set time_class = get_time_of_day(hour) %}
+                <li class="carousel-item {{ time_class }}">
+                    <p>{{ prediction[0] }}</p>
+                    <p>{{ prediction[1] }}</p>
+                    <p>{{ prediction[2] | format_number }}°C</p>
+                    <p>{{ prediction[3] | format_number }} km/h</p>
+                    <p>{{ prediction[4] | format_number }} mm</p>
+                    <p>{{ prediction[5] | format_number }}%</p>
+                </li>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <p>No 48-hour predictions available.</p>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    
+
+    <h2>7-Day Predictions</h2>
+    <div class="carousel-wrapper">
+        <div class="carousel-container">
+            <ul class="carousel">
+                {% if predicted_7d %}
+                {% for prediction in predicted_7d %}
+                <li class="carousel-item day">
+                    <p>Date: {{ prediction[0] }}</p>
+                    <p>Max Temp: {{ prediction[1] | format_number }}°C</p>
+                    <p>Min Temp: {{ prediction[2] | format_number }}°C</p>
+                    <p>Avg Temp: {{ prediction[3] | format_number }}°C</p>
+                    <p>Wind: {{ prediction[4] | format_number }} m/s</p>
+                    <p>Wind Dir: {{ prediction[5] | format_number }}°</p>
+                    <p>Precip: {{ prediction[6] | format_number }} mm</p>
+                    <p>Humidity: {{ prediction[7] | format_number }}%</p>
+                </li>
+                {% endfor %}
+                {% else %}
+                <p>No 7-day predictions available.</p>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    <script>
+        function slideCarousel(direction) {
+            const carousel = document.querySelector('.carousel');
+            const itemWidth = carousel.querySelector('.carousel-item').offsetWidth;
+            carousel.scrollLeft += direction * itemWidth * 6;
+        }
+    </script>
+</body>
+
+</html>

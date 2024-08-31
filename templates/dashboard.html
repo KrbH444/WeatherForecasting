@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Welcome to Weather Forecasting App!</h1>
+        <div class="admin-controls mb-3">
+            {% if current_user.is_authenticated %}
+                <button class="btn btn-primary mr-2" onclick="window.location.href='/admin_dashboard';">Go to Admin Dashboard</button>
+                <button class="btn btn-danger" onclick="window.location.href='/logout';">Logout</button>
+            {% else %}
+                <button class="btn btn-primary mr-2" onclick="window.location.href='/admin_login';">Admin Login</button>
+            {% endif %}
+        </div>
+        {% if weather %}
+        <div class="weather-info">
+            <h2>Melaka</h2>
+            <p class="temperature">{{ weather.temperature }}°C</p>
+            <p class="description">{{ weather.description.capitalize() }}</p>
+        </div>
+        {% else %}
+        <p>Failed to retrieve weather data.</p>
+        {% endif %}
+        <div class="services">
+            <div class="service-item">
+                <a href="{{ url_for('realtime_weather') }}" class="btn btn-primary">Real-Time</a>
+            </div>
+            <div class="service-item">
+                <a href="{{ url_for('weather_map') }}" class="btn btn-danger">Weather Map</a>
+            </div>
+            <div class="service-item">
+                <a href="{{ url_for('past_weather') }}" class="btn btn-success">History</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

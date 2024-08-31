@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    <h1>Weather Map</h1>
+    <div>
+        <form method="post">
+            <label for="hour">Select Hour:</label>
+            <select name="hour" id="hour" onchange="this.form.submit()">
+                {% for hour in range(num_hours) %}
+                    <option value="{{ hour }}" {% if request.form.get('hour') == hour|string %}selected{% endif %}>Hour {{ hour }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        {% if geo_heatmap_html %}
+            {{ geo_heatmap_html | safe }}
+        {% else %}
+            <p>No data available for the heatmap.</p>
+        {% endif %}
+    </div>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

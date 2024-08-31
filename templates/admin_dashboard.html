@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        .chart-container {
+            width: 80%;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container container">
+        <h1>Hello, {{ username }}!</h1>
+        <div class="admin-controls mb-3">
+            <button class="btn btn-danger" onclick="window.location.href='/logout';">Logout</button>
+            <button class="btn btn-primary" onclick="window.location.href='/edit_profile';">Edit Profile</button>
+        </div>
+        {% if weather %}
+        <div class="weather-info">
+            <h2>Melaka</h2>
+            <p>Temperature: {{ weather.temperature }}°C</p>
+            <p>Humidity: {{ weather.humidity }}%</p>
+            <p>Feels like: {{ weather.feels_like }}°C</p>
+            <p>Description: {{ weather.description.capitalize() }}</p>
+        </div>
+        {% else %}
+        <p>Failed to retrieve weather data.</p>
+        {% endif %}
+        <div class="services row mb-4">
+            <div class="service-item col">
+                <a href="{{ url_for('realtime_weather') }}" class="btn btn-primary btn-block">Real-Time</a>
+            </div>
+            <div class="service-item col">
+                <a href="{{ url_for('weather_map') }}" class="btn btn-danger btn-block">Weather Map</a>
+            </div>
+            <div class="service-item col">
+                <a href="{{ url_for('past_weather') }}" class="btn btn-success btn-block">History</a>
+            </div>
+        </div>
+
+        <!-- Weather Analysis -->
+        <div class="chart-container">
+            <h2>48-Hour Temperature Forecast</h2>
+            <div id="hourlyTempChart"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>7-Day Temperature Trends</h2>
+            <div id="dailyTempChart"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Hourly Wind Speed for the Next 48 Hours</h2>
+            <div id="hourlyWindSpeedChart"></div>
+        </div>
+
+        <!-- Wind Rose Diagram -->
+        <div class="chart-container">
+            <h2>Daily Wind Rose Diagram</h2>
+            <div id="windRoseChart"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Daily Precipitation Amounts for the Next 7 Days</h2>
+            <div id="dailyPrecipitationChart"></div>
+        </div>
+
+        <!-- Precipitation Intensity Heatmap -->
+        <div class="chart-container">
+            <h2>Precipitation Intensity</h2>
+            <div id="precipitationHeatmap"></div>
+        </div>
+
+        <!-- Hourly Humidity Line Chart -->
+        <div class="chart-container">
+            <h2>Hourly Humidity Levels for the Next 48 Hours</h2>
+            <div id="hourlyHumidityChart"></div>
+        </div>
+
+        <!-- Humidity Distribution Box Plot -->
+        <div class="chart-container">
+            <h2>Humidity Distribution</h2>
+            <div id="monthlyHumidityChart"></div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 48-Hour Temperature Line Chart
+            const hourlyLabels = JSON.parse('{{ hourly_labels|tojson }}');
+            const hourlyT2M = JSON.parse('{{ hourly_t2m|tojson }}');
+
+            const hourlyTempData = {
+                x: hourlyLabels,
+                y: hourlyT2M,
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: {
+                    color: 'red'
+                },
+                marker: {
+                    color: hourlyT2M.map(temp => {
+                        if (temp < 20) return '#ffffb2';
+                        if (temp < 25) return '#fecc5c';
+                        if (temp < 30) return '#fd8d3c';
+                        if (temp < 35) return '#f03b20';
+                        return '#bd0026';
+                    })
+                }
+            };
+
+            Plotly.newPlot('hourlyTempChart', [hourlyTempData], {
+                title: '48-Hour Temperature Forecast',
+                xaxis: { title: 'Time' },
+                yaxis: { title: 'Temperature (°C)', range: [0, 40] }
+            });
+
+            // 7-Day Temperature Area Chart
+            const dailyLabels = JSON.parse('{{ daily_labels|tojson }}');
+            const dailyT2MMin = JSON.parse('{{ daily_t2m_min|tojson }}');
+            const dailyT2MMax = JSON.parse('{{ daily_t2m_max|tojson }}');
+
+            const dailyTempMinData = {
+                x: dailyLabels,
+                y: dailyT2MMin,
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: 'blue' },
+                fill: 'tonexty'
+            };
+
+            const dailyTempMaxData = {
+                x: dailyLabels,
+                y: dailyT2MMax,
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: 'orange' },
+                fill: 'tonexty'
+            };
+
+            Plotly.newPlot('dailyTempChart', [dailyTempMinData, dailyTempMaxData], {
+                title: '7-Day Temperature Trends',
+                xaxis: { title: 'Time' },
+                yaxis: { title: 'Temperature (°C)', range: [0, 40] }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Wind Rose Diagram
+            const windRoseData = JSON.parse('{{ wind_rose_data|tojson }}');
+            const windSpeeds = windRoseData.map(data => data.WS10M_MAX);
+            const windDirections = windRoseData.map(data => data.WD10M);
+
+            const windRosePlotData = [{
+                r: windSpeeds,
+                theta: windDirections,
+                type: 'scatterpolar',
+                mode: 'lines+markers',
+                line: { color: 'blue' }
+            }];
+
+            Plotly.newPlot('windRoseChart', windRosePlotData, {
+                title: 'Daily Wind Rose Diagram',
+                polar: {
+                    radialaxis: { range: [0, Math.max(...windSpeeds)] }
+                }
+            });
+
+            // Hourly Wind Speed Bar Chart
+            const hourlyLabels = JSON.parse('{{ hourly_labels|tojson }}');
+            const hourlyWindSpeedData = JSON.parse('{{ hourly_wind_speed_data|tojson }}');
+
+            const hourlyWindSpeedPlotData = [{
+                x: hourlyLabels,
+                y: hourlyWindSpeedData,
+                type: 'bar',
+                marker: { color: 'green' }
+            }];
+
+            Plotly.newPlot('hourlyWindSpeedChart', hourlyWindSpeedPlotData, {
+                title: 'Hourly Wind Speed for the Next 48 Hours',
+                xaxis: { title: 'Time' },
+                yaxis: { title: 'Wind Speed (m/s)' }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Daily Precipitation Column Chart
+            const dailyLabels = JSON.parse('{{ daily_labels|tojson }}');
+            const dailyPrecipitationData = JSON.parse('{{ daily_precipitation_data|tojson }}');
+
+            const dailyPrecipitationPlotData = {
+                x: dailyLabels,
+                y: dailyPrecipitationData,
+                type: 'bar',
+                marker: {
+                    color: dailyPrecipitationData.map(precip => {
+                        if (precip < 1) return '#b3cde0';
+                        if (precip < 3) return '#6497b1';
+                        if (precip < 5) return '#005b96';
+                        if (precip < 7) return '#03396c';
+                        return '#011f4b';
+                    })
+                }
+            };
+
+            Plotly.newPlot('dailyPrecipitationChart', [dailyPrecipitationPlotData], {
+                title: 'Daily Precipitation Amounts for the Next 7 Days',
+                xaxis: { title: 'Date' },
+                yaxis: { title: 'Precipitation (mm)' }
+            });
+
+            // Precipitation Intensity Heatmap
+            const monthlyPrecipitationData = JSON.parse('{{ monthly_precipitation_data|tojson }}');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            const precipitationHeatmapData = {
+                z: [monthlyPrecipitationData],
+                x: months,
+                y: ['Intensity'],
+                type: 'heatmap',
+                colorscale: 'Blues'
+            };
+
+            Plotly.newPlot('precipitationHeatmap', [precipitationHeatmapData], {
+                title: 'Precipitation Intensity',
+                xaxis: { title: 'Month' },
+                yaxis: { title: 'Intensity' }
+            });
+
+            // Hourly Humidity Line Chart
+            const hourlyHumidityLabels = JSON.parse('{{ hourly_labels|tojson }}');
+            const hourlyHumidityData = JSON.parse('{{ hourly_humidity_data|tojson }}');
+
+            const hourlyHumidityChart = {
+                x: hourlyHumidityLabels,
+                y: hourlyHumidityData,
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: {
+                    color: hourlyHumidityData.map(humidity => {
+                        // Use a gradient of blue to green to represent low to high humidity
+                        const hue = Math.round((humidity / 100) * 120); // Map humidity to hue (blue to green)
+                        return `hsl(${hue}, 100%, 50%)`;
+                    })
+                }
+            };
+
+            Plotly.newPlot('hourlyHumidityChart', [hourlyHumidityChart], {
+                title: 'Hourly Humidity Levels for the Next 48 Hours',
+                xaxis: { title: 'Time' },
+                yaxis: { title: 'Humidity (%)', range: [0, 100] }
+            });
+
+            // Humidity Distribution Box Plot
+            const monthlyHumidityData = JSON.parse('{{ monthly_humidity_data|tojson }}');
+
+            const monthlyHumidityChart = {
+                x: months,
+                y: monthlyHumidityData,
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: {
+                    color: 'blue' // You can adjust the color as needed
+                }
+            };
+
+            Plotly.newPlot('monthlyHumidityChart', [monthlyHumidityChart], {
+                title: 'Monthly Humidity Levels',
+                xaxis: { title: 'Month' },
+                yaxis: { title: 'Humidity (%)', range: [0, 100] }
+            });
+        });
+    </script>
+</body>
+
+</html>

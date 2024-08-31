@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Weather</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/past.css') }}">
+</head>
+<body>
+    <h1>Past 7 Days Weather in Melaka</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temperature (Max)</th>
+                <th>Temperature (Min)</th>
+                <th>Temperature (Avg)</th>
+                <th>Humidity</th>
+                <th>Precipitation</th>
+                <th>Wind Speed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for day in past_weather_data %}
+                <tr>
+                    <td>{{ day.date }}</td>
+                    <td>{{ day.temp_max }}</td>
+                    <td>{{ day.temp_min }}</td>
+                    <td>{{ day.temp_avg }}</td>
+                    <td>{{ day.humidity }}</td>
+                    <td>{{ day.precip }}</td>
+                    <td>{{ day.windspeed }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

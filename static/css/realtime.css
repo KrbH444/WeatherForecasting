@@ -1,0 +1,170 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f5f5f5;
+    color: #333;
+    background-image: url('weather.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.container {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.current-weather {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.current-weather h1,
+.current-weather h2 {
+    margin: 0;
+}
+
+.current-weather .temperature {
+    font-size: 48px;
+    margin: 0;
+}
+
+.current-weather .description {
+    font-size: 18px;
+    color: #666;
+    margin: 5px 0;
+}
+
+.current-weather .time {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+.weather-details {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.weather-details p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.sun-times {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.sun-times p {
+    margin: 0;
+    font-size: 16px;
+}
+
+button.refresh-button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+button.refresh-button:hover {
+    background-color: #0056b3;
+}
+
+.carousel-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.carousel-container {
+    display: flex;
+    overflow-x: auto;
+    width: 100%;
+    scroll-behavior: smooth;
+}
+
+.carousel {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.carousel-item {
+    border-radius: 8px;
+    padding: 10px;
+    min-width: 150px;
+    margin-right: 15px;
+    text-align: center;
+}
+
+.carousel-item.morning {
+    background-color: #FFD54F; /* Soft morning sunlight color */
+}
+
+.carousel-item.morning:hover {
+    background-color: #FFE082; /* Hover color for morning */
+}
+
+.carousel-item.afternoon {
+    background-color: #4FC3F7; /* Clear sky blue for afternoon */
+}
+
+.carousel-item.afternoon:hover {
+    background-color: #81D4FA; /* Hover color for afternoon */
+}
+
+.carousel-item.evening {
+    background-color: #9575CD; /* Twilight purple for evening */
+}
+
+.carousel-item.evening:hover {
+    background-color: #B39DDB; /* Hover color for evening */
+}
+
+.carousel-item.night {
+    background-color: #516a77; /* Dark night sky color */
+}
+
+.carousel-item.night:hover {
+    background-color: #6e8fa0; /* Hover color for night */
+}
+
+.carousel-item.day {
+    background-color: #4FC3F7; /* Clear sky blue for afternoon */
+}
+
+.carousel-item.day:hover {
+    background-color: #81D4FA; /* Hover color for afternoon */
+}
+
+.carousel-item p {
+    margin: 5px 0;
+}
+
+a {
+    display:flex;
+    width: fit-content;
+    margin: 1rem auto;
+    padding: 0.8rem 1.5rem;
+    background-color: #f01010;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  a:hover {
+    background-color: #e01313;
+  }
