@@ -1,0 +1,33 @@
+{
+  "name": "weather-forecasting-system",
+  "version": "1.0.0",
+  "description": "AI-powered weather forecasting system for Melaka, Malaysia",
+  "main": "app.py",
+  "scripts": {
+    "build:css": "tailwindcss -i ./static/css/tailwind.css -o ./static/css/output.css --watch",
+    "build:css:prod": "tailwindcss -i ./static/css/tailwind.css -o ./static/css/output.css --minify",
+    "dev": "python app.py",
+    "start": "python app.py"
+  },
+  "keywords": [
+    "weather",
+    "forecasting",
+    "machine-learning",
+    "flask",
+    "python",
+    "tailwindcss"
+  ],
+  "author": "Weather Forecasting Team",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.3.0",
+    "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/typography": "^0.5.9",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24"
+  },
+  "dependencies": {
+    "chart.js": "^4.3.0",
+    "plotly.js": "^2.24.1"
+  }
+} 

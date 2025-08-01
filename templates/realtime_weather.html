@@ -1,98 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Forecast</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/realtime.css') }}">
+    <title>Real-Time Weather - Melaka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body>
-    <div class="container">
-        <div class="current-weather">
-            <h1>Real-Time</h1>
-            <h2>Melaka</h2>
-            {% if weather %}
-            <p class="temperature">{{ weather.temperature }}°C</p>
-            <p class="description">{{ weather.description }}</p>
-            <p class="time">{{ current_time }}</p>
-            <div class="weather-details">
-                <p>Wind: {{ weather.wind_speed }} km/h</p>
-                <p>Humidity: {{ weather.humidity }}%</p>
-                <p>Precipitation: {{ weather.precipitation }}%</p>
-            </div>
-            <div class="sun-times">
-                <p>Sunrise: {{ weather.sunrise }}</p>
-                <p>Sunset: {{ weather.sunset }}</p>
-            </div>
-            <button class="refresh-button" onclick="location.reload();">Refresh Data</button>
-            {% else %}
-            <p>No current weather data available.</p>
-            {% endif %}
-        </div>
-    </div>
-
-    <h2>48-Hour Predictions</h2>
-    <div class="carousel-wrapper">
-        <div class="carousel-container">
-            <ul class="carousel">
-                {% if predicted_48h %}
-                {% for prediction in predicted_48h %}
-                {% if loop.index0 >= current_hour %}
-                {% set prediction_time = prediction[0].split(':') %}
-                {% set hour = prediction_time[0]|int %}
-                {% set am_pm = prediction_time[1][-2:] %}
-                {% if hour == 12 %}
-                    {% set hour = 0 if am_pm == 'AM' else 12 %}
-                {% else %}
-                    {% set hour = hour if am_pm == 'AM' else hour + 12 %}
-                {% endif %}
-                {% set time_class = get_time_of_day(hour) %}
-                <li class="carousel-item {{ time_class }}">
-                    <p>{{ prediction[0] }}</p>
-                    <p>{{ prediction[1] }}</p>
-                    <p>{{ prediction[2] | format_number }}°C</p>
-                    <p>{{ prediction[3] | format_number }} km/h</p>
-                    <p>{{ prediction[4] | format_number }} mm</p>
-                    <p>{{ prediction[5] | format_number }}%</p>
-                </li>
-                {% endif %}
-                {% endfor %}
-                {% else %}
-                <p>No 48-hour predictions available.</p>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
+    <!-- Background with weather image -->
+    <div class="absolute inset-0 bg-weather-bg bg-cover bg-center bg-fixed opacity-20"></div>
     
+    <!-- Main content -->
+    <div class="relative z-10 min-h-screen p-4">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8 animate-fade-in">
+                <h1 class="text-4xl font-bold text-weather-dark mb-2">
+                    <i class="fas fa-clock text-weather-blue mr-3"></i>Real-Time Weather
+                </h1>
+                <p class="text-xl text-weather-gray">Melaka, Malaysia</p>
+            </div>
 
-    <h2>7-Day Predictions</h2>
-    <div class="carousel-wrapper">
-        <div class="carousel-container">
-            <ul class="carousel">
-                {% if predicted_7d %}
-                {% for prediction in predicted_7d %}
-                <li class="carousel-item day">
-                    <p>Date: {{ prediction[0] }}</p>
-                    <p>Max Temp: {{ prediction[1] | format_number }}°C</p>
-                    <p>Min Temp: {{ prediction[2] | format_number }}°C</p>
-                    <p>Avg Temp: {{ prediction[3] | format_number }}°C</p>
-                    <p>Wind: {{ prediction[4] | format_number }} m/s</p>
-                    <p>Wind Dir: {{ prediction[5] | format_number }}°</p>
-                    <p>Precip: {{ prediction[6] | format_number }} mm</p>
-                    <p>Humidity: {{ prediction[7] | format_number }}%</p>
-                </li>
-                {% endfor %}
+            <!-- Current Weather Card -->
+            <div class="weather-card mb-8 animate-slide-up">
+                {% if weather %}
+                <div class="text-center">
+                    <div class="flex items-center justify-center mb-6">
+                        <i class="fas fa-map-marker-alt text-weather-red text-3xl mr-4"></i>
+                        <h2 class="text-3xl font-bold text-weather-dark">Melaka</h2>
+                    </div>
+                    
+                    <div class="temperature-display weather-float mb-4">
+                        {{ weather.temperature }}°C
+                    </div>
+                    
+                    <div class="weather-description mb-6">
+                        <i class="fas fa-cloud mr-2"></i>
+                        {{ weather.description }}
+                    </div>
+                    
+                    <div class="text-lg text-weather-gray mb-6">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        {{ current_time }}
+                    </div>
+
+                    <!-- Weather Details Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="weather-detail">
+                            <span class="weather-detail-label">
+                                <i class="fas fa-wind mr-2"></i>Wind Speed
+                            </span>
+                            <span class="weather-detail-value">{{ weather.wind_speed }} km/h</span>
+                        </div>
+                        <div class="weather-detail">
+                            <span class="weather-detail-label">
+                                <i class="fas fa-tint mr-2"></i>Humidity
+                            </span>
+                            <span class="weather-detail-value">{{ weather.humidity }}%</span>
+                        </div>
+                        <div class="weather-detail">
+                            <span class="weather-detail-label">
+                                <i class="fas fa-cloud-rain mr-2"></i>Precipitation
+                            </span>
+                            <span class="weather-detail-value">{{ weather.precipitation }}%</span>
+                        </div>
+                    </div>
+
+                    <!-- Sun Times -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="weather-detail">
+                            <span class="weather-detail-label">
+                                <i class="fas fa-sunrise mr-2"></i>Sunrise
+                            </span>
+                            <span class="weather-detail-value">{{ weather.sunrise }}</span>
+                        </div>
+                        <div class="weather-detail">
+                            <span class="weather-detail-label">
+                                <i class="fas fa-sunset mr-2"></i>Sunset
+                            </span>
+                            <span class="weather-detail-value">{{ weather.sunset }}</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="location.reload();">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh Data
+                    </button>
+                </div>
                 {% else %}
-                <p>No 7-day predictions available.</p>
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle text-weather-yellow text-4xl mb-4"></i>
+                    <p class="text-lg text-weather-gray">No current weather data available.</p>
+                </div>
                 {% endif %}
-            </ul>
+            </div>
+
+            <!-- 48-Hour Predictions -->
+            <div class="mb-8 animate-slide-up">
+                <h2 class="text-2xl font-bold text-weather-dark mb-4 text-center">
+                    <i class="fas fa-hourglass-half mr-2"></i>48-Hour Predictions
+                </h2>
+                <div class="overflow-x-auto">
+                    <div class="flex space-x-4 pb-4">
+                        {% if predicted_48h %}
+                        {% for prediction in predicted_48h %}
+                        {% if loop.index0 >= current_hour %}
+                        {% set prediction_time = prediction[0].split(':') %}
+                        {% set hour = prediction_time[0]|int %}
+                        {% set am_pm = prediction_time[1][-2:] %}
+                        {% if hour == 12 %}
+                            {% set hour = 0 if am_pm == 'AM' else 12 %}
+                        {% else %}
+                            {% set hour = hour if am_pm == 'AM' else hour + 12 %}
+                        {% endif %}
+                        {% set time_class = get_time_of_day(hour) %}
+                        <div class="carousel-item {{ time_class }} min-w-[200px]">
+                            <div class="text-sm font-semibold mb-2">{{ prediction[0] }}</div>
+                            <div class="text-sm mb-1">{{ prediction[1] }}</div>
+                            <div class="text-lg font-bold mb-1">{{ prediction[2] | format_number }}°C</div>
+                            <div class="text-xs mb-1">{{ prediction[3] | format_number }} km/h</div>
+                            <div class="text-xs mb-1">{{ prediction[4] | format_number }} mm</div>
+                            <div class="text-xs">{{ prediction[5] | format_number }}%</div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <div class="text-center w-full">
+                            <p class="text-weather-gray">No 48-hour predictions available.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7-Day Predictions -->
+            <div class="mb-8 animate-slide-up">
+                <h2 class="text-2xl font-bold text-weather-dark mb-4 text-center">
+                    <i class="fas fa-calendar-week mr-2"></i>7-Day Predictions
+                </h2>
+                <div class="overflow-x-auto">
+                    <div class="flex space-x-4 pb-4">
+                        {% if predicted_7d %}
+                        {% for prediction in predicted_7d %}
+                        <div class="carousel-item day min-w-[250px]">
+                            <div class="text-sm font-semibold mb-2">Date: {{ prediction[0] }}</div>
+                            <div class="text-xs mb-1">Max: {{ prediction[1] | format_number }}°C</div>
+                            <div class="text-xs mb-1">Min: {{ prediction[2] | format_number }}°C</div>
+                            <div class="text-lg font-bold mb-1">Avg: {{ prediction[3] | format_number }}°C</div>
+                            <div class="text-xs mb-1">Wind: {{ prediction[4] | format_number }} m/s</div>
+                            <div class="text-xs mb-1">Dir: {{ prediction[5] | format_number }}°</div>
+                            <div class="text-xs mb-1">Precip: {{ prediction[6] | format_number }} mm</div>
+                            <div class="text-xs">Humidity: {{ prediction[7] | format_number }}%</div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="text-center w-full">
+                            <p class="text-weather-gray">No 7-day predictions available.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Button -->
+            <div class="text-center animate-fade-in">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </a>
+            </div>
         </div>
     </div>
 
-
-    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
     <script>
         function slideCarousel(direction) {
             const carousel = document.querySelector('.carousel');
@@ -101,5 +182,4 @@
         }
     </script>
 </body>
-
 </html>

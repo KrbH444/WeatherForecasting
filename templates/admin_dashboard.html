@@ -1,95 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Admin Dashboard - Weather Forecasting System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <style>
-        .chart-container {
-            width: 80%;
-            margin: auto;
-        }
-    </style>
 </head>
 
-<body>
-    <div class="dashboard-container container">
-        <h1>Hello, {{ username }}!</h1>
-        <div class="admin-controls mb-3">
-            <button class="btn btn-danger" onclick="window.location.href='/logout';">Logout</button>
-            <button class="btn btn-primary" onclick="window.location.href='/edit_profile';">Edit Profile</button>
-        </div>
-        {% if weather %}
-        <div class="weather-info">
-            <h2>Melaka</h2>
-            <p>Temperature: {{ weather.temperature }}°C</p>
-            <p>Humidity: {{ weather.humidity }}%</p>
-            <p>Feels like: {{ weather.feels_like }}°C</p>
-            <p>Description: {{ weather.description.capitalize() }}</p>
-        </div>
-        {% else %}
-        <p>Failed to retrieve weather data.</p>
-        {% endif %}
-        <div class="services row mb-4">
-            <div class="service-item col">
-                <a href="{{ url_for('realtime_weather') }}" class="btn btn-primary btn-block">Real-Time</a>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
+    <!-- Background with weather image -->
+    <div class="absolute inset-0 bg-weather-bg bg-cover bg-center bg-fixed opacity-20"></div>
+    
+    <!-- Main content -->
+    <div class="relative z-10 min-h-screen p-4">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8 animate-fade-in">
+                <h1 class="text-4xl font-bold text-weather-dark mb-4 text-shadow-lg">
+                    <i class="fas fa-user-shield text-weather-blue mr-4"></i>Admin Dashboard
+                </h1>
+                <p class="text-xl text-weather-gray">Welcome back, {{ username }}!</p>
             </div>
-            <div class="service-item col">
-                <a href="{{ url_for('weather_map') }}" class="btn btn-danger btn-block">Weather Map</a>
+
+            <!-- Admin Controls -->
+            <div class="flex justify-center mb-8 animate-slide-up">
+                <button class="btn btn-danger mr-4" onclick="window.location.href='/logout';">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='/edit_profile';">
+                    <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                </button>
             </div>
-            <div class="service-item col">
-                <a href="{{ url_for('past_weather') }}" class="btn btn-success btn-block">History</a>
+
+            <!-- Current Weather Card -->
+            {% if weather %}
+            <div class="weather-card mb-8 animate-slide-up">
+                <div class="weather-info">
+                    <div class="flex items-center justify-center mb-4">
+                        <i class="fas fa-map-marker-alt text-weather-red text-3xl mr-4"></i>
+                        <h2 class="text-3xl font-bold text-weather-dark">Melaka</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-weather-dark">{{ weather.temperature }}°C</div>
+                            <div class="text-weather-gray">Temperature</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-weather-dark">{{ weather.humidity }}%</div>
+                            <div class="text-weather-gray">Humidity</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-weather-dark">{{ weather.feels_like }}°C</div>
+                            <div class="text-weather-gray">Feels Like</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-weather-dark">{{ weather.description.capitalize() }}</div>
+                            <div class="text-weather-gray">Condition</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+            {% else %}
+            <div class="card mb-8 animate-slide-up">
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle text-weather-yellow text-4xl mb-4"></i>
+                    <p class="text-lg text-weather-gray">Failed to retrieve weather data.</p>
+                </div>
+            </div>
+            {% endif %}
 
-        <!-- Weather Analysis -->
-        <div class="chart-container">
-            <h2>48-Hour Temperature Forecast</h2>
-            <div id="hourlyTempChart"></div>
-        </div>
+            <!-- Navigation Services -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-slide-up">
+                <div class="weather-card text-center hover:scale-105 transition-transform duration-300">
+                    <div class="mb-4">
+                        <i class="fas fa-clock text-weather-blue text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Real-Time Weather</h3>
+                    <a href="{{ url_for('realtime_weather') }}" class="btn btn-primary w-full">
+                        <i class="fas fa-arrow-right mr-2"></i>View Real-Time
+                    </a>
+                </div>
 
-        <div class="chart-container">
-            <h2>7-Day Temperature Trends</h2>
-            <div id="dailyTempChart"></div>
-        </div>
+                <div class="weather-card text-center hover:scale-105 transition-transform duration-300">
+                    <div class="mb-4">
+                        <i class="fas fa-map text-weather-red text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Weather Map</h3>
+                    <a href="{{ url_for('weather_map') }}" class="btn btn-danger w-full">
+                        <i class="fas fa-arrow-right mr-2"></i>View Map
+                    </a>
+                </div>
 
-        <div class="chart-container">
-            <h2>Hourly Wind Speed for the Next 48 Hours</h2>
-            <div id="hourlyWindSpeedChart"></div>
-        </div>
+                <div class="weather-card text-center hover:scale-105 transition-transform duration-300">
+                    <div class="mb-4">
+                        <i class="fas fa-history text-weather-green text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Historical Data</h3>
+                    <a href="{{ url_for('past_weather') }}" class="btn btn-success w-full">
+                        <i class="fas fa-arrow-right mr-2"></i>View History
+                    </a>
+                </div>
+            </div>
 
-        <!-- Wind Rose Diagram -->
-        <div class="chart-container">
-            <h2>Daily Wind Rose Diagram</h2>
-            <div id="windRoseChart"></div>
-        </div>
+            <!-- Weather Analysis Charts -->
+            <div class="space-y-8 animate-slide-up">
+                <!-- 48-Hour Temperature Forecast -->
+                <div class="weather-card">
+                    <h2 class="text-2xl font-bold text-weather-dark mb-4 text-center">
+                        <i class="fas fa-thermometer-half mr-2"></i>48-Hour Temperature Forecast
+                    </h2>
+                    <div id="hourlyTempChart" class="w-full h-96"></div>
+                </div>
 
-        <div class="chart-container">
-            <h2>Daily Precipitation Amounts for the Next 7 Days</h2>
-            <div id="dailyPrecipitationChart"></div>
-        </div>
+                <!-- 7-Day Temperature Trends -->
+                <div class="weather-card">
+                    <h2 class="text-2xl font-bold text-weather-dark mb-4 text-center">
+                        <i class="fas fa-chart-line mr-2"></i>7-Day Temperature Trends
+                    </h2>
+                    <div id="dailyTempChart" class="w-full h-96"></div>
+                </div>
 
-        <!-- Precipitation Intensity Heatmap -->
-        <div class="chart-container">
-            <h2>Precipitation Intensity</h2>
-            <div id="precipitationHeatmap"></div>
-        </div>
+                <!-- Hourly Wind Speed -->
+                <div class="weather-card">
+                    <h2 class="text-2xl font-bold text-weather-dark mb-4 text-center">
+                        <i class="fas fa-wind mr-2"></i>Hourly Wind Speed for the Next 48 Hours
+                    </h2>
+                    <div id="hourlyWindSpeedChart" class="w-full h-96"></div>
+                </div>
 
-        <!-- Hourly Humidity Line Chart -->
-        <div class="chart-container">
-            <h2>Hourly Humidity Levels for the Next 48 Hours</h2>
-            <div id="hourlyHumidityChart"></div>
-        </div>
+                <!-- Wind Rose Diagram -->
+                <div class="weather-card">
+                    <h2 class="text-2xl font-bold text-weather-dark mb-4 text-center">
+                        <i class="fas fa-compass mr-2"></i>Daily Wind Rose Diagram
+                    </h2>
+                    <div id="windRoseChart" class="w-full h-96"></div>
+                </div>
 
-        <!-- Humidity Distribution Box Plot -->
-        <div class="chart-container">
-            <h2>Humidity Distribution</h2>
-            <div id="monthlyHumidityChart"></div>
+                <!-- Daily Precipitation -->
+                <div class="weather-card">
+                    <h2 class="text-2xl font-bold text-weather-dark mb-4 text-center">
+                        <i class="fas fa-cloud-rain mr-2"></i>Daily Precipitation Amounts for the Next 7 Days
+                    </h2>
+                    <div id="dailyPrecipitationChart" class="w-full h-96"></div>
+                </div>
+
+                <!-- Precipitation Intensity Heatmap -->
+                <div class="weather-card">
+                    <h2 class="text-2xl font-bold text-weather-dark mb-4 text-center">
+                        <i class="fas fa-fire mr-2"></i>Precipitation Intensity
+                    </h2>
+                    <div id="precipitationHeatmap" class="w-full h-96"></div>
+                </div>
+
+                <!-- Hourly Humidity -->
+                <div class="weather-card">
+                    <h2 class="text-2xl font-bold text-weather-dark mb-4 text-center">
+                        <i class="fas fa-tint mr-2"></i>Hourly Humidity Levels for the Next 48 Hours
+                    </h2>
+                    <div id="hourlyHumidityChart" class="w-full h-96"></div>
+                </div>
+
+                <!-- Humidity Distribution -->
+                <div class="weather-card">
+                    <h2 class="text-2xl font-bold text-weather-dark mb-4 text-center">
+                        <i class="fas fa-chart-bar mr-2"></i>Humidity Distribution
+                    </h2>
+                    <div id="monthlyHumidityChart" class="w-full h-96"></div>
+                </div>
+            </div>
         </div>
     </div>
     <script>

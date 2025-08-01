@@ -1,56 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sign up</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration - Weather Forecasting System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-    <div class="container">
-        <div class="info-container">
-            <div class="info-content">
-                <p>Have an account?</p>
-                <form action="{{ url_for('admin_login') }}">
-                    <button type="submit" class="btn">Log in</button>
-                </form>
-            </div>
-        </div>
-        <div class="form-container">
-            <div class="form-content">
-                <h2>Admin Registration</h2>
-                <form method="POST" action="">
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
+    <!-- Background with weather image -->
+    <div class="absolute inset-0 bg-weather-bg bg-cover bg-center bg-fixed opacity-20"></div>
+    
+    <!-- Main content -->
+    <div class="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <!-- Registration Card -->
+            <div class="weather-card animate-slide-up">
+                <div class="text-center mb-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <i class="fas fa-user-plus text-weather-blue text-4xl mr-3"></i>
+                        <h1 class="text-3xl font-bold text-weather-dark">Admin Registration</h1>
+                    </div>
+                    <p class="text-weather-gray">Create a new administrator account</p>
+                </div>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'error' if category == 'error' else 'info' }} mb-6">
+                                <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'info-circle' }} mr-2"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Registration Form -->
+                <form method="POST" action="" class="space-y-6">
                     {{ form.hidden_tag() }}
-                    <p>
-                        {{ form.username.label }}<br>
-                        {{ form.username(size=32) }}
+                    
+                    <div>
+                        <label class="form-label">
+                            <i class="fas fa-user mr-2"></i>Username
+                        </label>
+                        {{ form.username(class="form-input", placeholder="Enter your username") }}
                         {% for error in form.username.errors %}
-                            <span style="color: red;">{{ error }}</span>
+                            <p class="text-weather-red text-sm mt-1">
+                                <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                            </p>
                         {% endfor %}
-                    </p>
-                    <p>
-                        {{ form.email.label }}<br>
-                        {{ form.email(size=32) }}
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <i class="fas fa-envelope mr-2"></i>Email
+                        </label>
+                        {{ form.email(class="form-input", placeholder="Enter your email") }}
                         {% for error in form.email.errors %}
-                            <span style="color: red;">{{ error }}</span>
+                            <p class="text-weather-red text-sm mt-1">
+                                <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                            </p>
                         {% endfor %}
-                    </p>
-                    <p>
-                        {{ form.password.label }}<br>
-                        {{ form.password(size=32) }}
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <i class="fas fa-lock mr-2"></i>Password
+                        </label>
+                        {{ form.password(class="form-input", placeholder="Enter your password") }}
                         {% for error in form.password.errors %}
-                            <span style="color: red;">{{ error }}</span>
+                            <p class="text-weather-red text-sm mt-1">
+                                <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                            </p>
                         {% endfor %}
-                    </p>
-                    <p>
-                        {{ form.confirm_password.label }}<br>
-                        {{ form.confirm_password(size=32) }}
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <i class="fas fa-lock mr-2"></i>Confirm Password
+                        </label>
+                        {{ form.confirm_password(class="form-input", placeholder="Confirm your password") }}
                         {% for error in form.confirm_password.errors %}
-                            <span style="color: red;">{{ error }}</span>
+                            <p class="text-weather-red text-sm mt-1">
+                                <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                            </p>
                         {% endfor %}
-                    </p>
-                    <button type="submit" class="btn"> Register </button>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-full">
+                        <i class="fas fa-user-plus mr-2"></i>Register
+                    </button>
                 </form>
-                <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+
+                <!-- Login Link -->
+                <div class="text-center mt-6 pt-6 border-t border-gray-200">
+                    <p class="text-weather-gray mb-3">Already have an account?</p>
+                    <a href="{{ url_for('admin_login') }}" class="btn btn-secondary w-full">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Log In
+                    </a>
+                </div>
+
+                <!-- Back to Dashboard -->
+                <div class="text-center mt-6">
+                    <a href="{{ url_for('dashboard') }}" class="text-weather-blue hover:text-weather-dark-blue transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                    </a>
+                </div>
             </div>
         </div>
     </div>

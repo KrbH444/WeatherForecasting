@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, Markup
+from flask import Flask, render_template, redirect, url_for, flash, request
+from markupsafe import Markup
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import secrets
