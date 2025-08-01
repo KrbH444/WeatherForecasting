@@ -33,7 +33,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'admin_login'  # Separate view for admin login
-api_key = '6476247d6af7e1d43d41e7b1dd4779d6'
+api_key = #Add your SQLAlchemy API key
 
 # Load your pre-trained models and scalers
 model_48h = load_model('hourly_cnn_lstm_weather_model.h5')
@@ -42,11 +42,7 @@ scaler_48h = joblib.load('hourly_scaler.pkl')
 scaler_7d = joblib.load('daily_scaler.pkl')
 
 API_KEYS = [
-    "G82543YHG2RCV4T2NKB7DADZF",
-    "D8ATGRGWAUQT3RF8HQ45QXU56",
-    "R3TKYVPDGHETCD6YPRMCE5CYU",
-    "5ZH42W7ER6FFD2FZ9UQLXV3DY",
-    "TQQLX778KF3JTAXDDXXF7SKJC"
+#Add your API Keys in https://api.openweathermap.org
 ]
 
 class User(db.Model, UserMixin):
