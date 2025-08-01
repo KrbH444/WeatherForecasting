@@ -76,9 +76,9 @@ This weather forecasting system combines real-time weather data from OpenWeather
 - **Font Awesome**: Icon library
 - **Inter Font**: Modern typography
 
-### External APIs
-- **OpenWeatherMap API**: Real-time weather data
-- **Multiple API Keys**: Redundant data sources for reliability
+### External s
+- **OpenWeatherMap **: Real-time weather data
+- **Multiple  Keys**: Redundant data sources for reliability
 
 ### Database
 - **SQLite**: Lightweight database for user management
@@ -213,7 +213,7 @@ weather-forecasting-system/
 └── README.md                      # Project documentation
 ```
 
-## 🔌 API Documentation
+## 🔌  Documentation
 
 ### Weather Data Endpoints
 
@@ -291,15 +291,11 @@ The system uses hybrid CNN-LSTM models for weather prediction:
 
 ## 🔧 Configuration
 
-### API Keys
+###  Keys
 The application uses multiple OpenWeatherMap API keys for redundancy:
 ```python
 API_KEYS = [
-    "G82543YHG2RCV4T2NKB7DADZF",
-    "D8ATGRGWAUQT3RF8HQ45QXU56",
-    "R3TKYVPDGHETCD6YPRMCE5CYU",
-    "5ZH42W7ER6FFD2FZ9UQLXV3DY",
-    "TQQLX778KF3JTAXDDXXF7SKJC"
+#Add Your API KEYS Here https://api.openweathermap.org
 ]
 ```
 
